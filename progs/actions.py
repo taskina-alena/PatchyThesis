@@ -45,7 +45,7 @@ def add_npt(integrator, sim, kT, tau, tauS, couple):
     sim.run(0)
     thermostat.thermalize_dof()
 
-def run_sim(sim, n_timesteps, name, n_save=10000, save=['property'], n_switch=1000, mode='xb'):
+def run_sim(sim, n_steps, filename, n_save=10000, save=['property'], n_switch=1000, mode='xb'):
     """
     Runs the simulation and periodically saves the state to a GSD file.
 
@@ -61,12 +61,12 @@ def run_sim(sim, n_timesteps, name, n_save=10000, save=['property'], n_switch=10
     thermodynamic_properties = hoomd.md.compute.ThermodynamicQuantities(filter=hoomd.filter.All())
     sim.operations.computes.append(thermodynamic_properties)
     logger = hoomd.logging.Logger()
-    logger.add(thermodynamic_properties, quantities=['temperature', 'pressure', 'energy'])
+    logger.add(thermodynamic_properties, quantities=['kinetic_temperature', 'pressure', 'potential_energy'])
     logger.add(sim, quantities=['timestep'])
-    gsd_writer = hoomd.write.GSD(filename=name, trigger=hoomd.trigger.Or([hoomd.trigger.Periodic(n_save), hoomd.trigger.Before(n_switch)]), mode=mode, filter=hoomd.filter.All(), dynamic=save)
+    gsd_writer = hoomd.write.GSD(filename=filename, trigger=hoomd.trigger.Or([hoomd.trigger.Periodic(n_save), hoomd.trigger.Before(n_switch)]), mode=mode, filter=hoomd.filter.All(), dynamic=save)
     sim.operations.writers.append(gsd_writer)
     gsd_writer.logger = logger
-    sim.run(n_timesteps)
+    sim.run(n_steps)
     gsd_writer.flush()
     sim.operations.writers.remove(gsd_writer)
 

@@ -233,35 +233,35 @@ class ParticleInitializer:
         self.snapshot.particles.position.extend(new_positions.tolist())
 
     def _connect_patches(self):
+
+        n_interactions = int(self.N_cores * self.n_patches * (self.n_patches - 1) / 2)
+        interaction_groups = []
+        bond_groups = []
+        for core_id in range(self.N_cores):
+            patch_ids = range(core_id * self.n_patches + self.N_cores, (core_id + 1) * self.n_patches + self.N_cores)
+            for i, patch_id in enumerate(patch_ids):
+                bond_groups.append([core_id, patch_id])
+                for next_patch_id in patch_ids[i + 1:]:
+                    interaction_groups.append([patch_id, core_id, next_patch_id] if self.angles_inter else [patch_id, next_patch_id])
+
         total_bonds = self.N_cores * self.n_patches
-        self.snapshot.bonds.N = total_bonds
+        self.snapshot.bonds.N = total_bond
         self.snapshot.bonds.types = ['core-patch']
         self.snapshot.bonds.typeid = [0] * total_bonds
-        self.snapshot.bonds.group = [[core, core + offset] for core in range(self.N_cores) for offset in range(1, self.n_patches + 1)]
+        self.snapshot.bonds.group = bond_groups
 
-        # Handling angles and intra-particle interactions if applicable
-        if self.angles_inter or self.intra:
-            n_interactions = int(self.N_cores * self.n_patches * (self.n_patches - 1) / 2)
-            interaction_groups = []
+        if self.angles_inter:
+            self.snapshot.angles.N = n_interactions
+            self.snapshot.angles.types = ['patch-core-patch']
+            self.snapshot.angles.typeid = [0] * n_interactions
+            self.snapshot.angles.group = [group for group in interaction_groups if len(group) == 3]
 
-            for core_id in range(self.N_cores):
-                patch_ids = range(core_id * self.n_patches + self.N_cores, (core_id + 1) * self.n_patches + self.N_cores)
-                for i, patch_id in enumerate(patch_ids):
-                    for next_patch_id in patch_ids[i + 1:]:
-                        interaction_groups.append([patch_id, core_id, next_patch_id] if self.angles_inter else [patch_id, next_patch_id])
-
-            if self.angles_inter:
-                self.snapshot.angles.N = n_interactions
-                self.snapshot.angles.types = ['patch-core-patch']
-                self.snapshot.angles.typeid = [0] * n_interactions
-                self.snapshot.angles.group = [group for group in interaction_groups if len(group) == 3]
-
-            if self.intra:
-                self.snapshot.pairs.N = n_interactions
-                self.snapshot.pairs.types = ['intra']
-                self.snapshot.pairs.typeid = [0] * n_interactions
-                # For intra, adjust groups to only include patch-patch pairs
-                self.snapshot.pairs.group = [group for group in interaction_groups if len(group) == 2]
+        if self.intra:
+            self.snapshot.pairs.N = n_interactions
+            self.snapshot.pairs.types = ['intra']
+            self.snapshot.pairs.typeid = [0] * n_interactions
+            # For intra, adjust groups to only include patch-patch pairs
+            self.snapshot.pairs.group = [group for group in interaction_groups if len(group) == 2]
 
 
     def save_to_gsd(self, name, seed=0):

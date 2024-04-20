@@ -3,8 +3,6 @@ import freud
 import matplotlib
 import gsd.hoomd
 import re, os
-from scipy.optimize import curve_fit
-import quaternion
 from scipy import stats
 
 import numpy as np
@@ -557,7 +555,7 @@ class Phase_Diagram:
         self.directory = directory
         self.equil_files = [file for file in os.listdir(directory) if file.startswith(phrase)]
         self.kTs = [float(re.search(f'{phrase}(\d+(\.\d+)?)', file).group(1)) for file in self.equil_files]
-        self.kTs.sort()
+        self.equil_files, self.kTs = zip(*sorted(zip(self.equil_files, self.kTs), key=lambda x: x[1]))
         self.packing_fractions = [Packing_Fraction(os.path.join(directory, f), n_patches, frame, r_core, window_size, N_bins, average_over_frames, phase_range) for f in self.equil_files]
         self._build()
 
@@ -579,6 +577,7 @@ class Phase_Diagram:
         # Plot each profile with corresponding color.
         for pf, color in zip(self.packing_fractions, colors):
             pf.draw_phi_profile(ax, color=color, alpha=0.01)  # Adjust alpha as needed
+
 
     def get_critical_point(self, m, n):
         """
@@ -609,10 +608,9 @@ class Phase_Diagram:
         phic = intercept
         s2 = slope
         
-        return phic, Tc, d, s2
+        return phic, Tc, d, s2   
 
-    
-
+'''
 def get_rel_pos(traj, centr=False, rotation=False, n_core=0, n_patch=0):
     """
     Calculate relative positions of a patch to its core particle in Cartesian and polar coordinates,
@@ -702,3 +700,4 @@ def haversine(psi1, psi2, th1, th2):
     return distance
 
 haversine_vec = np.vectorize(haversine)
+'''
