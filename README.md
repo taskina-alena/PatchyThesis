@@ -1,6 +1,6 @@
 Molecular dynamics simulations of patchy particles system. 
 
-folder progs has .py files that are used to initialise the system (initialisation.py), run the simulation (actions.py) and analyse trajectories (analysis.py). The file drawing.py allows to make sketches of patchy particles.
+The folder /progs is used to initialise the system (initialisation.py), run the simulation (actions.py) and analyse trajectories (analysis.py). The file drawing.py allows to make sketches of patchy particles.
 
 The file scripts/run_sim.py can be used to run different simulations
 
