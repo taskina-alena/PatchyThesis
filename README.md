@@ -1,25 +1,18 @@
-Molecular dynamics simulations of patchy particles system.
-Cores interact through excluded volumes interactions, while patches attract each other and can intersect. 
+# Patchy Particles MD simulations
 
-<img src="particle.svg" class="left-image">
-<img src="chain.svg" class="right-image">
+## Overview
+This software suite simulates the dynamics of patchy particle systems. Cores of particles interact through excluded volume interactions while patches attract each other and can intersect. 
 
-<style>
-  .left-image {
-    float: left;
-    width: 300px;
-    height: auto;
-  }
+![](particle.svg) ![](chain.svg)
 
-  .right-image {
-    float: right;
-    width: 300px;
-    height: auto;
-  }
-</style>
+## Repository Structure
+- `/progs`: Contains the core scripts
+  - `initialisation.py`: Script to initialize the simulation setup.
+  - `actions.py`: Conducts the simulations with predefined parameters.
+  - `analysis.py`: Analyzes simulation results and computes various properties.
+  - `drawing.py`: Utility to sketch representations of patchy particles.
+- `/scripts`: Contains scripts to run various simulations.
+  - `run_sim.py`: Main script to execute different simulation scenarios.
+- `/notebooks`: Jupyter notebooks for detailed data analysis and visualization.
+  - Includes notebooks for analyzing bonds, structure, mobility, and phase diagrams.
 
-The folder /progs is used to initialise the system (initialisation.py), run the simulation (actions.py) and analyse trajectories (analysis.py). The file drawing.py allows to make sketches of patchy particles.
-
-The file scripts/run_sim.py can be used to run different simulations
-
-Data analysis and visualisation are shown in notebooks/ folder. It includes bonds, structure, mobility and phase_diagrams analysis.  
