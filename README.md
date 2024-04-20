@@ -3,7 +3,7 @@
 ## Overview
 This software suite simulates the dynamics of patchy particle systems. Cores of particles interact through excluded volume interactions while patches attract each other and can intersect. 
 
-![](particle.svg) ![](chain.svg)
+<img src="particle.svg"  width="300"/> <img src="chain.svg" width="300"/>
 
 ## Repository Structure
 - `/progs`: Contains the core scripts
